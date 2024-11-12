@@ -23,17 +23,14 @@ const checkOrCreateUser = async (req, res) => {
     }
 };
 
-// 사용자 정보 조회
-const getUserInfo = async (req, res) => {
-    //const userId = req.user.firebase_uid;
-    const { firebase_uid } = req.query;
-
+// 모든 사용자 정보 조회
+const getAllUsers = async (req, res) => {
     try {
-        const [results] = await userModel.getUserInfo(firebase_uid);
+        const results = await userModel.getAllUsers();  // 모든 사용자 조회
         if (results.length === 0) {
-            return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+            return res.status(404).json({ error: '사용자가 없습니다.' });
         }
-        res.json(results[0]);
+        res.json(results);  // 모든 사용자 정보 반환
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -52,4 +49,4 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { checkOrCreateUser, getUserInfo, deleteUser };
+module.exports = { checkOrCreateUser, deleteUser,getAllUsers };

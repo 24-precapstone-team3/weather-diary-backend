@@ -19,18 +19,18 @@ const createDiary = async (req, res) => {
     }
 };
 
-// // 일기를 업데이트하는 함수
-// const updateDiary = async (req, res) => {
-//     const diaryId = req.params.id;
-//     const { content, weather } = req.body;
+// 일기를 업데이트하는 함수
+const updateDiary = async (req, res) => {
+    const diaryId = req.params.id;
+    const { content, weather } = req.body;
 
-//     try {
-//         await diaryModel.updateDiary(diaryId, content, weather);
-//         res.json({ message: '일기가 수정되었습니다.' });
-//     } catch (error) {
-//         res.status(500).json({ error: '일기 수정에 실패했습니다.' });
-//     }
-// };
+    try {
+        await diaryModel.updateDiary(diaryId, content, weather);
+        res.json({ message: '일기가 수정되었습니다.' });
+    } catch (error) {
+        res.status(500).json({ error: '일기 수정에 실패했습니다.' });
+    }
+};
 
 // 모든 일기를 조회하는 함수
 const getAllDiaries = async (req, res) => {
@@ -83,4 +83,4 @@ const deleteDiary = async (req, res) => {
 //     }
 // };
 
-module.exports = { createDiary, getAllDiaries, getDiaryById, deleteDiary };
+module.exports = { createDiary, getAllDiaries,updateDiary, getDiaryById, deleteDiary };

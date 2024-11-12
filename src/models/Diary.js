@@ -6,10 +6,10 @@ const createDiary = (firebase_uid, content, date, weather) => {
     return db.promise().query('INSERT INTO Diaries (firebase_uid, content, date, weather) VALUES (?, ?, ?, ?)', [firebase_uid, content, date, weather]);
 };
 
-// // 일기 업데이트
-// const updateDiary = (diaryId, content, weather) => {
-//     return db.promise().query('UPDATE Diaries SET content = ?, weather = ? WHERE diary_id = ?', [content, weather, diaryId]);
-// };
+// 일기 업데이트
+const updateDiary = (diaryId, content, weather) => {
+    return db.promise().query('UPDATE Diaries SET content = ?, weather = ? WHERE diary_id = ?', [content, weather, diaryId]);
+};
 
 // 모든 일기 조회
 const getAllDiaries = (firebase_uid) => {
@@ -45,4 +45,4 @@ const deleteDiary = (diaryId) => {
 //     });
 // };
 
-module.exports = { createDiary, getAllDiaries, getDiaryById, deleteDiary};
+module.exports = { createDiary, getAllDiaries, updateDiary, getDiaryById, deleteDiary};

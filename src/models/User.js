@@ -11,19 +11,19 @@ const createUser = (firebase_uid) => {
     return db.promise().query('INSERT INTO Users (firebase_uid) VALUES (?)', [firebase_uid]);
 };
 
-// 사용자 정보 조회
-const getUserInfo = (firebase_uid) => {
-    return db.promise().query('SELECT firebase_uid FROM Users WHERE firebase_uid = ?', [firebase_uid]);
-};
-
 // 사용자 삭제
 const deleteUser = (firebase_uid) => {
     return db.promise().query('DELETE FROM Users WHERE firebase_uid = ?', [firebase_uid]);
 };
-
+// 모든 사용자 조회
+const getAllUsers = async () => {
+    const query = 'SELECT * FROM users';  // 모든 사용자 조회 쿼리
+    const [results] = await db.promise().query(query);  // [rows, fields] 구조로 반환됨
+    return results;
+}
 module.exports = { 
-    findUserByFirebaseUID, 
+    findUserByFirebaseUID,    
     createUser, 
-    getUserInfo, 
-    deleteUser 
+    deleteUser ,
+    getAllUsers
 };
