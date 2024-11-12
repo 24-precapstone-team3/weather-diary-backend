@@ -4,20 +4,29 @@ const path = require('path');       // 경로 조작을 위한 path 모듈
 const weatherRoutes = require('./routes/weatherRoutes');
 const diaryRoutes = require('./routes/diaryRoutes');
 const userRoutes = require('./routes/userRoutes');
+const openAiRoutes = require('./routes/openAiRoutes');// OpenAI 라우터 불러오기
+const photoRoutes = require('./routes/photoRoutes'); // 사진 라우트 불러오기
+const tagRoutes = require('./routes/tagRoutes');// 태그  라우트 불러오기
+const analysisRoutes = require('./routes/analysisRoutes'); //일기상담 라우트 불러오기
+
 
 const app = express();              // Express 애플리케이션 생성
 const PORT = process.env.PORT || 3000; // 포트 설정 (기본값 3000)
-
-// 미들웨어 설정
-//app.use(express.json()); // JSON 요청을 처리하는 미들웨어
-//app.use(express.urlencoded({ extended: false })); // URL-encoded 요청을 처리하는 미들웨어
-//app.use(express.static(path.join(__dirname, '../public'))); // public 폴더를 정적 파일로 제공
 
 app.use(express.json());
 app.use('/api', diaryRoutes);
 app.use('/api', userRoutes);
 app.use('/api', weatherRoutes);
-
+// 'uploads' 폴더를 정적 파일로 제공 (사진 접근을 위해)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+//사진 라우트 연결
+app.use('/api', photoRoutes);
+//태그 라우트 연결
+app.use('/api', tagRoutes);
+//일기 상담 라우트 연결
+app.use('/api', analysisRoutes);
+// OpenAI 라우트 연결
+app.use('/api/openai', openAiRoutes);
 // 서버 시작
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
