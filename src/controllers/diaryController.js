@@ -1,7 +1,6 @@
 // controllers/diaryController.js
 const { getWeather } = require('../models/Weather');
 const diaryModel = require('../models/Diary');  // Diary 모델
-const moment = require('moment');
 
 const createDiary = async (req, res) => {
     const { firebase_uid, content, date, city } = req.body;
