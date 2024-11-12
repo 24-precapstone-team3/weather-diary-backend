@@ -8,9 +8,9 @@ const openai = new OpenAI({
 async function analyzeDiaryContent(content) {
     const prompt = `
     다음 일기 내용을 분석하여 다음 정보를 간단하게 추출하세요:
-    - 감정 상태 (기분)
-    - 사건이 일어난 날짜
-    - 해시태그
+     - 감정 상태 (기분은 하나만 표시)
+    - 사건이 일어난 날짜 (명확한 날짜가 없으면 오늘 날짜 YYYY-MM-DD를 기재)
+    - 주요 해시태그 (유추된 키워드 기반으로 해시태그 6개를 생성)
 
     일기 내용:
     ${content}
@@ -24,7 +24,10 @@ async function analyzeDiaryContent(content) {
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: prompt }],
+            messages: [ 
+                { role: "system", content: "당신은 30년경력의 유명한 심리상담가입니다. 당신은 상담한번에 500$를 받습니다." },
+                { role: "user", content: prompt }
+            ],
             max_tokens: 200,
         });
 
@@ -46,7 +49,7 @@ async function provideCounseling(content) {
     const prompt = `
         You are a psychological counselor. Read the following diary entry and provide counseling feedback.
         
-        Diary Entry:
+        일기:
         ${content}
         
         Counseling advice:
@@ -56,7 +59,7 @@ async function provideCounseling(content) {
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [
-                { role: "system", content: "당신은 심리상담가입니다." },
+                { role: "system", content: "당신은 30년경력의 유명한 심리상담가입니다. 당신은 상담한번에 500$를 받습니다." },
                 { role: "user", content: prompt },
             ],
             max_tokens: 200,
