@@ -6,7 +6,6 @@ const {
     getAllDiaries,
     getDiaryById,
     deleteDiary,
-    // searchDiaries
 } = require('../controllers/diaryController');
 const router = express.Router();
 
