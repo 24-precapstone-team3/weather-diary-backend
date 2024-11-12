@@ -1,5 +1,5 @@
 // models/user.js
-const db = require('../db/db');  // MySQL 연결 모듈
+const db = require('../config/db');  // MySQL 연결 모듈
 
 // Firebase UID로 사용자 조회
 const findUserByFirebaseUID = (firebase_uid) => {

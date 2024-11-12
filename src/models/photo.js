@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db');
 
 // 사진 파일 경로와 다이어리 ID 저장
 exports.savePhotoPath = (filePath, diaryId, callback) => {

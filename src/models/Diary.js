@@ -1,5 +1,5 @@
 // models/Diary.js
-const db = require('../db/db');
+const db = require('../config/db');
 
 // 새로운 일기를 생성
 const createDiary = (firebase_uid, content, date, weather) => {

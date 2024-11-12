@@ -1,5 +1,5 @@
 // models/Tag.js
-const db = require('../db');
+const db = require('../config/db');
 
 // 태그 추가 함수
 exports.addTags = (tags, diary_id) => {
