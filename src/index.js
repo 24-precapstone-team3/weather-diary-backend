@@ -26,7 +26,7 @@ app.use('/api', tagRoutes);
 //일기 상담 라우트 연결
 app.use('/api', analysisRoutes);
 // OpenAI 라우트 연결
-app.use('/api/openai', openAiRoutes);
+app.use('/api', openAiRoutes);
 // 서버 시작
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
