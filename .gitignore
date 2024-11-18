@@ -4,3 +4,8 @@
 .env.test.local
 .env.production.local
 .env.local
+
+# Ignore keys folder
+keys/
+src/config/keys/
+*.pem
