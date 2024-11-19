@@ -28,6 +28,6 @@ app.use('/api', analysisRoutes);
 // OpenAI 라우트 연결
 app.use('/api', openAiRoutes);
 // 서버 시작
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
