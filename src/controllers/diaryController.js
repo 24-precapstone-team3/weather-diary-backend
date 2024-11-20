@@ -1,31 +1,37 @@
 // controllers/diaryController.js
 const { getWeather } = require('../models/Weather');
-const diaryModel = require('../models/Diary');  // Diary 모델
+const diaryModel = require('../models/Diary');
+const { analyzeDiaryContent } = require('../models/openAi'); // OpenAI 분석 함수 불러오기
 
+// 새로운 일기 작성
 const createDiary = async (req, res) => {
-    const { firebase_uid, content, date, city } = req.body;
+    const firebase_uid = req.headers['firebase_uid'];
+    const { content, date, city } = req.body;
 
-    // date가 없거나 잘못된 형식일 경우 처리
-    if (!date || !isValidDate(date)) {
-        return res.status(400).json({ error: '올바른 날짜 형식(YYYY-MM-DD)을 입력해주세요.' });
+    if (!firebase_uid || !date || !isValidDate(date)) {
+        return res.status(400).json({ error: 'firebase_uid와 올바른 날짜 형식(YYYY-MM-DD)을 제공해주세요.' });
     }
 
     try {
-        // 날씨 정보를 받아오기
         const weatherData = await getWeather(city);
-        const weather = weatherData.weather[0].description; // 날씨 설명
+        const weather = weatherData.weather[0].description;
 
-        // 입력된 date를 그대로 사용
-        const formattedDate = date; // date 값을 그대로 사용
+        const { mood } = await analyzeDiaryContent(content);
 
-        // 일기 생성
-        const [results] = await diaryModel.createDiary(firebase_uid, content, formattedDate, weather);
-        res.status(201).json({ diary_id: results.insertId, firebase_uid, content, date: formattedDate, weather });
+        const [results] = await diaryModel.createDiary(firebase_uid, content, date, weather, mood);
+
+        res.status(201).json({
+            diary_id: results.insertId,
+            firebase_uid,
+            content,
+            date,
+            weather,
+            emotion: mood, // 응답에 emotion 포함
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
-
 
 // 날짜 형식 검증 함수 (YYYY-MM-DD)
 const isValidDate = (date) => {
@@ -33,62 +39,127 @@ const isValidDate = (date) => {
     return regex.test(date);
 };
 
-// 일기를 업데이트하는 함수 (content만 업데이트)
-const updateDiary = async (req, res) => {
-    const diaryId = req.params.diary_id;
-    const { content } = req.body;  // content만 받도록 수정
-
-    // content가 없는 경우 처리
-    if (!content) {
-        return res.status(400).json({ error: '일기 내용(content)을 입력해 주세요.' });
-    }
-
-    try {
-        await diaryModel.updateDiary(diaryId, content);  // content만 전달
-        res.json({ message: '일기가 수정되었습니다.' });
-    } catch (error) {
-        res.status(500).json({ error: '일기 수정에 실패했습니다.' });
-    }
-};
-
-
-// 모든 일기를 조회하는 함수
+// 모든 일기 조회
 const getAllDiaries = async (req, res) => {
-    const firebase_uid = req.query.firebase_uid;
+    const firebase_uid = req.headers['firebase_uid'];
+
+    if (!firebase_uid) {
+        return res.status(400).json({ error: 'firebase_uid를 제공해주세요.' });
+    }
 
     try {
-        const [results] = await diaryModel.getAllDiaries(firebase_uid);
-        res.json(results);
-    } catch (error) {
-        res.status(500).json({ error: '일기 조회에 실패했습니다.' });
+        const [diaryRows] = await diaryModel.getAllDiaries(firebase_uid);
+
+        // 필요한 데이터만 반환 (배열 형태)
+        const diaries = diaryRows.map(diary => ({
+            diary_id: diary.diary_id,
+            firebase_uid: diary.firebase_uid,
+            content: diary.content,
+            date: diary.date,
+            weather: diary.weather,
+            emotion: diary.emotion,
+            created_at: diary.created_at,
+        }));
+
+        res.json(diaries);
+    } catch (err) {
+        res.status(500).json({ error: '일기 조회 실패', details: err.message });
     }
 };
 
-// 특정 일기를 조회하는 함수
+// 특정 일기 조회
 const getDiaryById = async (req, res) => {
-    const diaryId = req.params.diary_id;
+    const firebase_uid = req.headers['firebase_uid'];
+    const { diary_id } = req.params;
+
+    if (!firebase_uid || !diary_id) {
+        return res.status(400).json({ error: 'firebase_uid와 diary_id를 제공해주세요.' });
+    }
 
     try {
-        const [results] = await diaryModel.getDiaryById(diaryId);
-        if (results.length === 0) {
-            return res.status(404).json({ error: '일기를 찾을 수 없습니다.' });
+        const [diaryRows] = await diaryModel.getDiaryById(diary_id, firebase_uid);
+
+        if (!diaryRows || diaryRows.length === 0) {
+            return res.status(404).json({ error: '일기를 찾을 수 없거나 접근 권한이 없습니다.' });
         }
-        res.json(results[0]);
-    } catch (error) {
-        res.status(500).json({ error: '일기 조회에 실패했습니다.' });
+
+        const diary = diaryRows[0];
+
+        res.json({
+            diary_id: diary.diary_id,
+            firebase_uid: diary.firebase_uid,
+            content: diary.content,
+            date: diary.date,
+            weather: diary.weather,
+            emotion: diary.emotion,
+            created_at: diary.created_at,
+        });
+    } catch (err) {
+        res.status(500).json({ error: '일기 조회 실패', details: err.message });
     }
 };
 
-// 일기를 삭제하는 함수
-const deleteDiary = async (req, res) => {
-    const diaryId = req.params.diary_id;
+// 특정 일기 수정
+const updateDiary = async (req, res) => {
+    const firebase_uid = req.headers['firebase_uid'];
+    const { diary_id } = req.params;
+    const { content } = req.body;
+
+    if (!firebase_uid || !diary_id || !content) {
+        return res.status(400).json({ error: 'firebase_uid, diary_id와 content를 제공해주세요.' });
+    }
 
     try {
-        await diaryModel.deleteDiary(diaryId);
-        res.json({ message: '일기가 삭제되었습니다.' });
-    } catch (error) {
-        res.status(500).json({ error: '일기 삭제에 실패했습니다.' });
+        // 다이어리 내용 업데이트
+        const [results] = await diaryModel.updateDiary(diary_id, content);
+        if (results.affectedRows > 0) {
+            // OpenAI API 호출하여 분석
+            const { mood, hashTag, feedback } = await analyzeDiaryContent(content);
+
+            // 분석 결과 및 emotion 저장
+            await diaryModel.updateDiaryAnalysis(diary_id, feedback, hashTag, mood);
+
+            // 수정된 다이어리 데이터 조회
+            const [updatedDiary] = await diaryModel.getDiaryById(diary_id);
+
+            if (!updatedDiary || updatedDiary.length === 0) {
+                return res.status(404).json({ error: '수정된 일기를 찾을 수 없습니다.' });
+            }
+
+            // 응답으로 수정된 데이터 반환
+            res.status(200).json({
+                message: '일기 수정 성공',
+                updatedDiary: updatedDiary[0], // 단일 다이어리 정보 반환
+            });
+        } else {
+            res.status(404).json({ error: '일기를 찾을 수 없거나 수정할 권한이 없습니다.' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: '일기 수정 실패', details: err.message });
     }
 };
 
-module.exports = { createDiary, getAllDiaries,updateDiary, getDiaryById, deleteDiary };
+
+
+// 특정 일기 삭제
+const deleteDiary = async (req, res) => {
+    const firebase_uid = req.headers['firebase_uid'];
+    const { diary_id } = req.params;
+
+    if (!firebase_uid || !diary_id) {
+        return res.status(400).json({ error: 'firebase_uid와 diary_id를 제공해주세요.' });
+    }
+
+    try {
+        const [results] = await diaryModel.deleteDiary(diary_id, firebase_uid);
+        if (results.affectedRows > 0) {
+            res.status(200).json({ message: '일기 삭제 성공' });
+        } else {
+            res.status(404).json({ error: '일기를 찾을 수 없거나 삭제할 권한이 없습니다.' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: '일기 삭제 실패', details: err.message });
+    }
+};
+
+module.exports = { createDiary, getAllDiaries, updateDiary, getDiaryById, deleteDiary };

@@ -62,7 +62,7 @@ async function provideCounseling(content) {
                 { role: "system", content: "당신은 30년경력의 유명한 심리상담가입니다. 당신은 상담한번에 500$를 받습니다." },
                 { role: "user", content: prompt },
             ],
-            max_tokens: 500,
+            max_tokens: 200,
         });
 
         return response.choices[0].message.content;
