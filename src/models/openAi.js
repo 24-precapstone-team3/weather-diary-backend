@@ -34,9 +34,10 @@ async function analyzeDiaryContent(content) {
         const extractedText = response.choices[0].message.content.trim();
         const [moodLine, dateLine, hashTagLine] = extractedText.split("\n");
 
-        const mood = moodLine.split(":")[1]?.trim() || null;
-        const date = dateLine.split(":")[1]?.trim() || null;
-        const hashTag = hashTagLine.split(":")[1]?.trim() || null;
+        const mood = moodLine.split(":")[1] ? moodLine.split(":")[1].trim() : null;
+        const date = dateLine.split(":")[1] ? dateLine.split(":")[1].trim() : null;
+        const hashTag = hashTagLine.split(":")[1] ? hashTagLine.split(":")[1].trim() : null;
+
         
         return { mood, date, hashTag };
     } catch (error) {

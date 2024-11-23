@@ -14,7 +14,11 @@ exports.saveFeedback = (req, res) => {
             console.error("Error saving feedback:", err);
             return res.status(500).json({ error: "Error saving feedback" });
         }
-        res.status(201).json({ message: "Feedback saved successfully", result_id: results.insertId });
+        res.status(201).json({ 
+            message: "Feedback saved successfully", 
+            result_id: results.insertId,
+            diary_id: diary_id
+        });
     });
 };
 

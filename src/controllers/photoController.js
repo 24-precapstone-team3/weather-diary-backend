@@ -19,7 +19,7 @@ const upload = multer({ storage: storage });
 // 사진 파일 저장 및 경로 기록
 exports.uploadPhoto = [
     upload.single('photo'), // 'photo'는 프론트에서 보낸 파일의 필드명
-    (req, res) => {
+    async (req, res) => {
         const { diary_id } = req.body;
         const file_path = req.file ? req.file.path : null;
 
@@ -31,44 +31,44 @@ exports.uploadPhoto = [
             return res.status(400).json({ error: "No file uploaded" });
         }
 
-        // 모델을 통해 사진 경로 저장
-        photoModel.savePhotoPath(file_path, diary_id, (err, photoId) => {
-            if (err) {
-                return res.status(500).json({ error: "Error saving photo path" });
-            }
+        try {
+            // 모델을 통해 사진 경로 저장
+            const photoId = await photoModel.savePhotoPath(file_path, diary_id);
             res.status(201).json({ message: "Photo uploaded and path saved!", photo_id: photoId });
-        });
+        } catch (err) {
+            return res.status(500).json({ error: "Error saving photo path" });
+        }
     }
 ];
 
 // 특정 diary_id에 연결된 모든 사진 조회
-exports.getPhotosByDiaryId = (req, res) => {
+exports.getPhotosByDiaryId = async (req, res) => {
     const { diary_id } = req.params;
 
-    // 모델을 통해 사진 조회
-    photoModel.getPhotosByDiaryId(diary_id, (err, photos) => {
-        if (err) {
-            return res.status(500).json({ error: "Error fetching photos" });
-        }
+    try {
+        // 모델을 통해 사진 조회
+        const photos = await photoModel.getPhotosByDiaryId(diary_id);
         if (photos.length === 0) {
             return res.status(404).json({ message: "No photos found for this diary" });
         }
         res.json(photos);
-    });
+    } catch (err) {
+        return res.status(500).json({ error: "Error fetching photos" });
+    }
 };
 
 // 특정 diary_id에 연결된 모든 사진 삭제
-exports.deletePhotosByDiaryId = (req, res) => {
+exports.deletePhotosByDiaryId = async (req, res) => {
     const { diary_id } = req.params;
 
-    // 모델을 통해 사진 삭제
-    photoModel.deletePhotosByDiaryId(diary_id, (err, affectedRows) => {
-        if (err) {
-            return res.status(500).json({ error: "Error deleting photos" });
-        }
+    try {
+        // 모델을 통해 사진 삭제
+        const affectedRows = await photoModel.deletePhotosByDiaryId(diary_id);
         if (affectedRows === 0) {
             return res.status(404).json({ message: "No photos found to delete for this diary" });
         }
         res.status(200).json({ message: "All photos for this diary have been deleted" });
-    });
+    } catch (err) {
+        return res.status(500).json({ error: "Error deleting photos" });
+    }
 };
