@@ -1,8 +1,11 @@
 // routes/tagRoutes.js
 const express = require('express');
+const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 const {addTags, getDiariesByTag, getTagsByDiaryId, deleteTagsFromDiary} = require('../controllers/tagController');
 
+
+router.use(authMiddleware); // 미들웨어 적용
 // 해시태그 추가
 router.post('/tag', addTags);
 

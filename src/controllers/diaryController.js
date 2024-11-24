@@ -5,7 +5,7 @@ const { analyzeDiaryContent } = require('../models/openAi'); // OpenAI 분석 �
 
 // 새로운 일기 작성
 const createDiary = async (req, res) => {
-    const firebase_uid = req.headers['firebase_uid'];
+    const firebase_uid = req.firebase_uid; // 미들웨어에서 처리된 UID
     const { content, date, city } = req.body;
 
     if (!firebase_uid || !date || !isValidDate(date)) {
@@ -41,7 +41,7 @@ const isValidDate = (date) => {
 
 // 모든 일기 조회
 const getAllDiaries = async (req, res) => {
-    const firebase_uid = req.headers['firebase_uid'];
+    const firebase_uid = req.firebase_uid; // 미들웨어에서 처리된 UID
 
     if (!firebase_uid) {
         return res.status(400).json({ error: 'firebase_uid를 제공해주세요.' });
@@ -69,7 +69,7 @@ const getAllDiaries = async (req, res) => {
 
 // 특정 일기 조회
 const getDiaryById = async (req, res) => {
-    const firebase_uid = req.headers['firebase_uid'];
+    const firebase_uid = req.firebase_uid; // 미들웨어에서 처리된 UID
     const { diary_id } = req.params;
 
     if (!firebase_uid || !diary_id) {
@@ -101,7 +101,7 @@ const getDiaryById = async (req, res) => {
 
 // 특정 일기 수정
 const updateDiary = async (req, res) => {
-    const firebase_uid = req.headers['firebase_uid'];
+    const firebase_uid = req.firebase_uid; // 미들웨어에서 처리된 UID
     const { diary_id } = req.params;
     const { content } = req.body;
 
@@ -143,7 +143,7 @@ const updateDiary = async (req, res) => {
 
 // 특정 일기 삭제
 const deleteDiary = async (req, res) => {
-    const firebase_uid = req.headers['firebase_uid'];
+    const firebase_uid = req.firebase_uid; // 미들웨어에서 처리된 UID
     const { diary_id } = req.params;
 
     if (!firebase_uid || !diary_id) {
