@@ -1,14 +1,8 @@
-// routes/weatherRoutes.js
 const express = require('express');
-const { getWeatherInfo } = require('../controllers/weatherController');
-
 const router = express.Router();
+const weatherController = require('../controllers/weatherController');
 
-// 날씨 정보 조회 엔드포인트
-router.get('/weather', getWeatherInfo);
-//http://localhost:3000/api/weather?location=Seoul
-
-//라우터를 설정하여 파라미터 값 받기
-//router.post('/api/weather', getWeatherInfo);
+// 사용자 인증 없이 접근 가능한 날씨 조회 경로 설정
+router.get('/weather', weatherController.getWeatherInfo);
 
 module.exports = router;

@@ -26,15 +26,16 @@ const checkOrCreateUser = async (req, res) => {
 // 모든 사용자 정보 조회
 const getAllUsers = async (req, res) => {
     try {
-        const results = await userModel.getAllUsers();  // 모든 사용자 조회
+        const results = await userModel.getAllUsers(); // 모든 사용자 조회
         if (results.length === 0) {
             return res.status(404).json({ error: '사용자가 없습니다.' });
         }
-        res.json(results);  // 모든 사용자 정보 반환
+        res.json(results); // 모든 사용자 정보 반환
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 // 사용자 탈퇴
 const deleteUser = async (req, res) => {

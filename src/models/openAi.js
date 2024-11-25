@@ -9,7 +9,6 @@ async function analyzeDiaryContent(content) {
     const prompt = `
     다음 일기 내용을 분석하여 다음 정보를 간단하게 추출하세요:
      - 감정 상태 (기분은 하나만 표시)
-    - 사건이 일어난 날짜 (명확한 날짜가 없으면 YYYY-MM-DD를 기재)
     - 주요 해시태그 (유추된 키워드 기반으로 해시태그 6개를 생성)
 
     일기 내용:
@@ -17,7 +16,6 @@ async function analyzeDiaryContent(content) {
 
     응답 예시 형식 (이 형식대로 정확히 답변하세요):
     - 기분: 
-    - 날짜: 
     - 해시태그: 
 `;
 
@@ -32,14 +30,13 @@ async function analyzeDiaryContent(content) {
         });
 
         const extractedText = response.choices[0].message.content.trim();
-        const [moodLine, dateLine, hashTagLine] = extractedText.split("\n");
+        const [moodLine, hashTagLine] = extractedText.split("\n");
 
         const mood = moodLine.split(":")[1] ? moodLine.split(":")[1].trim() : null;
-        const date = dateLine.split(":")[1] ? dateLine.split(":")[1].trim() : null;
         const hashTag = hashTagLine.split(":")[1] ? hashTagLine.split(":")[1].trim() : null;
 
         
-        return { mood, date, hashTag };
+        return { mood, hashTag };
     } catch (error) {
         console.error("Error in OpenAI API request:", error);
         throw error;

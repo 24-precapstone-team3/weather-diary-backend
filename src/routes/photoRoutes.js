@@ -1,10 +1,8 @@
 // routes/PhotoRoutes.js
 const express = require('express');
-const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 const {uploadPhoto, getPhotosByDiaryId, deletePhotosByDiaryId} = require('../controllers/photoController');
 
-router.use(authMiddleware); // 미들웨어 적용
 // 사진 파일 업로드 및 경로 저장
 router.post('/photo/upload', uploadPhoto);
 
