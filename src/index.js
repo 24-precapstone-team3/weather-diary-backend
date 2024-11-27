@@ -11,7 +11,7 @@ const analysisRoutes = require('./routes/analysisRoutes'); //일기상담 라우
 
 
 const app = express();              // Express 애플리케이션 생성
-const PORT = process.env.PORT || 3000; // 포트 설정 (기본값 3000)
+const PORT = process.env.PORT || 443; // 포트 설정 (기본값 3000)
 
 app.use(express.json());
 app.use('/api', diaryRoutes);
