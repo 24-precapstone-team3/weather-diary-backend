@@ -4,7 +4,8 @@ const { analyzeDiaryContent, provideCounseling } = require('../models/openAi');
 // 일기 내용을 분석하여 정보 추출
 exports.analyzeContent = async (req, res) => {
     const { content } = req.body;
-
+    console.log(content);
+    console.log(req);
     if (!content) {
         return res.status(400).json({ error: "Diary content is required" });
     }
