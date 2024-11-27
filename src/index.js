@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express'); // Express 모듈 불러오기
+const cors = require('cors');
 const path = require('path');       // 경로 조작을 위한 path 모듈
 const weatherRoutes = require('./routes/weatherRoutes');
 const diaryRoutes = require('./routes/diaryRoutes');
@@ -9,15 +10,16 @@ const photoRoutes = require('./routes/photoRoutes'); // 사진 라우트 불러�
 const tagRoutes = require('./routes/tagRoutes');// 태그  라우트 불러오기
 const analysisRoutes = require('./routes/analysisRoutes'); //일기상담 라우트 불러오기
 
-const cors = require('cors');
+
 const app = express();              // Express 애플리케이션 생성
 const PORT = process.env.PORT || 3000; // 포트 설정 (기본값 3000)
 
-// CORS 설정
-app.use(cors({
-  origin: '*',
-  allowedHeaders: ['Content-Type', 'Authorization', 'firebase-uid']
-}));
+// 모든 출처에서의 요청 허용
+app.use(cors());
+
+app.get('/api/data', (req, res) => {
+    res.json({ message: 'CORS 설정이 적용되었습니다!' });
+});
 
 app.use(express.json());
 app.use('/api', diaryRoutes);
