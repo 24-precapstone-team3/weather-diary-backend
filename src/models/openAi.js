@@ -34,7 +34,7 @@ async function analyzeDiaryContent(content) {
 
         const mood = moodLine.split(":")[1] ? moodLine.split(":")[1].trim() : null;
         const hashTag = hashTagLine.split(":")[1] ? hashTagLine.split(":")[1].trim() : null;
-
+        console.log(mood, hashTag);
         
         return { mood, hashTag };
     } catch (error) {
