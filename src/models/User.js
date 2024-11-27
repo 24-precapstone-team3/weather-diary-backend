@@ -17,7 +17,7 @@ const deleteUser = (firebase_uid) => {
 };
 // 모든 사용자 조회
 const getAllUsers = async () => {
-    const query = 'SELECT * FROM users';  // 모든 사용자 조회 쿼리
+    const query = 'SELECT * FROM Users';  // 모든 사용자 조회 쿼리
     const [results] = await db.promise().query(query);  // [rows, fields] 구조로 반환됨
     return results;
 }
