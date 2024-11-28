@@ -6,7 +6,7 @@ const diaryModel = require('../models/Diary'); // Diary 관련 모델 추가
 // 파일 저장 경로 및 파일명 설정
 const storage = multer.diskStorage({
     destination: (req, cb) => {
-        cb(null, 'uploads/photos'); // 파일이 저장될 폴더 경로
+        cb(null, '../uploads/photos'); // 파일이 저장될 폴더 경로
         console.log(req);
         console.log(cd);
     },
