@@ -70,7 +70,14 @@ exports.getPhotosByDiaryId = async (req, res) => {
         if (photos.length === 0) {
             return res.status(404).json({ message: "No photos found for this diary" });
         }
-        res.json(photos);
+
+        // file_path를 클라이언트가 접근 가능한 URL로 변환
+        const updatedPhotos = photos.map(photo => ({
+            ...photo,
+            file_path: `http://<your-server-ip>:3000/uploads/photos/${path.basename(photo.file_path)}`, // 경로 변환
+        }));
+        
+        res.json(updatedPhotos);
     } catch (err) {
         return res.status(500).json({ error: err.message || "Error fetching photos" });
     }
