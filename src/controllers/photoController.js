@@ -5,12 +5,16 @@ const diaryModel = require('../models/Diary'); // Diary 관련 모델 추가
 
 // 파일 저장 경로 및 파일명 설정
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: (req, cb) => {
         cb(null, 'uploads/photos'); // 파일이 저장될 폴더 경로
+        console.log(req);
+        console.log(cd);
     },
-    filename: (req, file, cb) => {
+    filename: (file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, uniqueSuffix + path.extname(file.originalname)); // 고유 파일명 생성
+        console.log(file);
+        console.log(cd);
     }
 });
 
