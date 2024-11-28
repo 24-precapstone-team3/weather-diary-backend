@@ -59,6 +59,7 @@ async function analyzeDiaryContent(content) {
 async function provideCounseling(content) {
     const prompt = `
         You are a psychological counselor. Read the following diary entry and provide counseling feedback.
+        피드백 글자수는  공백 포함 200자로 제한해줘 
         
         일기:
         ${content}
