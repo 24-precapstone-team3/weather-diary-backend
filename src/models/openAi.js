@@ -8,8 +8,8 @@ const openai = new OpenAI({
 async function analyzeDiaryContent(content) {
     const prompt = `
     다음 일기 내용을 분석하여 다음 정보를 간단하게 추출하세요:
-    - 감정 상태 (기분은 하나만 표시)
-    - 주요 해시태그 (유추된 키워드 기반으로 해시태그 6개를 생성)
+    - 감정 상태 (기분은 하나만 표시,ex)  행복, 슬픔, 좌절, 낙담 이런식으로 기분을 표시해줘)
+    - 주요 해시태그 (유추된 키워드 기반으로 해시태그 최대 6개를 생성, ex) 카페, 나무, 죽음 명사로만 해시태그 나오게 해줘)
 
     일기 내용:
     ${content}
@@ -23,7 +23,7 @@ async function analyzeDiaryContent(content) {
         console.log("Sending request to OpenAI...");
 
         const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o",
             messages: [
                 { role: "system", content: "당신은 30년경력의 유명한 심리상담가입니다. 당신은 상담한번에 500$를 받습니다." },
                 { role: "user", content: prompt }
@@ -59,7 +59,7 @@ async function analyzeDiaryContent(content) {
 async function provideCounseling(content) {
     const prompt = `
         You are a psychological counselor. Read the following diary entry and provide counseling feedback.
-        피드백 글자수는  공백 포함 200자로 제한해줘 
+        피드백 글자수는  공백 포함 300자로 제한해줘 
         
         일기:
         ${content}
@@ -69,12 +69,12 @@ async function provideCounseling(content) {
 
     try {
         const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o",
             messages: [
                 { role: "system", content: "당신은 30년경력의 유명한 심리상담가입니다. 당신은 상담한번에 500$를 받습니다." },
                 { role: "user", content: prompt },
             ],
-            max_tokens: 200,
+            max_tokens: 300,
         });
 
         return response.choices[0].message.content;
