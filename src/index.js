@@ -26,7 +26,7 @@ app.use('/api', diaryRoutes);
 app.use('/api', userRoutes);
 app.use('/api', weatherRoutes);
 // 'uploads' 폴더를 정적 파일로 제공 (사진 접근을 위해)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'src/uploads')));
 //사진 라우트 연결
 app.use('/api', photoRoutes);
 //태그 라우트 연결
