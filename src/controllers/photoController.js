@@ -8,13 +8,13 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '../uploads/photos')); // 파일이 저장될 폴더 경로
         console.log(req);
-        console.log(cd);
+        console.log(cb);
     },
     filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
         cb(null, uniqueName); // 고유 파일명 생성
         console.log(file);
-        console.log(cd);
+        console.log(cb);
     }
 });
 
